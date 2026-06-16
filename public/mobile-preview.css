@@ -1,0 +1,483 @@
+:root {
+  --bg: #071016;
+  --phone: #02070b;
+  --panel: #0b151d;
+  --panel-2: #0e1b25;
+  --line: #1d3443;
+  --text: #f4f9fb;
+  --muted: #95a7b4;
+  --green: #2df34a;
+  --green-soft: rgba(45, 243, 74, 0.16);
+  --red: #ff463e;
+  --blue: #3b9bff;
+  --purple: #a853ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(45, 243, 74, 0.12), transparent 26%),
+    radial-gradient(circle at 80% 0%, rgba(59, 155, 255, 0.12), transparent 24%),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+}
+
+.previewShell {
+  width: min(1280px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 28px 0 48px;
+}
+
+.intro {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.intro h1 {
+  margin: 0;
+  color: var(--green);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.intro p {
+  margin: 8px 0 0;
+  font-size: 20px;
+}
+
+.phoneGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.phone {
+  position: relative;
+  min-height: 720px;
+  padding: 24px 22px 82px;
+  border: 2px solid #314655;
+  border-radius: 36px;
+  background:
+    linear-gradient(180deg, rgba(13, 28, 39, 0.8), rgba(0, 0, 0, 0.96)),
+    var(--phone);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.34), inset 0 0 0 6px rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+.statusBar,
+.screenHeader,
+.botTop,
+.buttonRow,
+.tabBar,
+.filterRow,
+.sendBox,
+.accountRow,
+.botRow {
+  display: flex;
+  align-items: center;
+}
+
+.statusBar {
+  justify-content: space-between;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.screenHeader {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h2 {
+  font-size: 25px;
+  line-height: 1.1;
+}
+
+h3 {
+  margin: 20px 0 10px;
+  font-size: 14px;
+}
+
+p,
+label,
+small {
+  color: var(--muted);
+}
+
+label {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.appIcon {
+  display: block;
+  object-fit: cover;
+  border: 1px solid rgba(164, 255, 64, 0.55);
+  box-shadow: 0 0 28px rgba(45, 243, 74, 0.28);
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+}
+
+.heroIcon {
+  width: 86px;
+  height: 86px;
+  border-radius: 20px;
+}
+
+.grassCube {
+  width: 84px;
+  height: 84px;
+  background:
+    linear-gradient(135deg, #49d236 0 42%, #7a4b24 42%),
+    linear-gradient(45deg, transparent 0 50%, rgba(0, 0, 0, 0.25) 50%);
+  border-radius: 10px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.32);
+}
+
+.serverPreviewIcon {
+  width: 82px;
+  height: 82px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  border: 1px solid rgba(164, 255, 64, 0.5);
+  background: rgba(5, 14, 11, 0.9);
+  box-shadow: 0 0 32px rgba(45, 243, 74, 0.24);
+  image-rendering: pixelated;
+  object-fit: cover;
+}
+
+.heroPanel,
+.connectionCard,
+.botCard,
+.botRow,
+.accountRow,
+.logList p,
+.selectBox {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(12, 24, 34, 0.78);
+}
+
+.heroPanel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.heroPanel strong {
+  display: block;
+  margin: 6px 0;
+  color: var(--green);
+  font-size: 20px;
+}
+
+.eyebrow,
+.statsGrid span {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.connectionCard {
+  padding: 16px;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #071018;
+  color: var(--text);
+  padding: 0 12px;
+}
+
+button {
+  min-height: 42px;
+  border: 1px solid rgba(45, 243, 74, 0.65);
+  border-radius: 9px;
+  background: var(--green-soft);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.primaryWide,
+.secondaryWide {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.secondaryWide {
+  border-color: var(--blue);
+  background: rgba(59, 155, 255, 0.13);
+}
+
+.noteList {
+  margin-top: 14px;
+}
+
+.noteList p {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.noteList span {
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.statsGrid,
+.actionGrid,
+.commandGrid {
+  display: grid;
+  gap: 8px;
+}
+
+.statsGrid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.statsGrid div {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.statsGrid strong {
+  display: block;
+  color: var(--green);
+  font-size: 26px;
+  margin: 10px 0 4px;
+}
+
+.actionGrid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.actionGrid button,
+.commandGrid button {
+  font-size: 12px;
+}
+
+.red {
+  border-color: var(--red) !important;
+  background: rgba(255, 70, 62, 0.13) !important;
+}
+
+.blue {
+  border-color: var(--blue) !important;
+  background: rgba(59, 155, 255, 0.13) !important;
+}
+
+.purple {
+  border-color: var(--purple) !important;
+  background: rgba(168, 83, 255, 0.13) !important;
+}
+
+.botRow,
+.accountRow {
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.botRow > div:nth-child(2),
+.accountRow > div:nth-child(2) {
+  flex: 1;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  border: 1px solid rgba(164, 255, 64, 0.25);
+  background: linear-gradient(135deg, #1fd95d, #0d6b34);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: inset 0 -12px 18px rgba(0, 0, 0, 0.22);
+}
+
+.avatarBlue {
+  background: linear-gradient(135deg, #3aa7ff, #16508f);
+}
+
+.avatarRed {
+  background: linear-gradient(135deg, #ff5a67, #8d1f28);
+}
+
+.avatarGreen {
+  background: linear-gradient(135deg, #1fd95d, #0d6b34);
+}
+
+.online p,
+.online small,
+.logList b {
+  color: var(--green);
+}
+
+.offline p,
+.logList em {
+  color: var(--red);
+  font-style: normal;
+}
+
+.botCard {
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.botTop {
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.botTop > div:nth-child(2) {
+  flex: 1;
+}
+
+.buttonRow {
+  gap: 8px;
+}
+
+.buttonRow button {
+  flex: 1;
+}
+
+.iconButton {
+  width: 40px;
+  border-radius: 12px;
+  font-size: 24px;
+}
+
+.selectBox {
+  justify-content: space-between;
+  padding: 12px;
+  min-height: 54px;
+}
+
+.commandGrid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.sendBox {
+  gap: 8px;
+  padding: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.sendBox button {
+  width: 48px;
+  flex: 0 0 48px;
+  font-size: 20px;
+}
+
+.filterRow {
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filterRow button {
+  min-height: 36px;
+  padding: 0 14px;
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+.filterRow .selected,
+.tabBar .selected {
+  color: var(--green);
+}
+
+.logList p {
+  padding: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.logList span {
+  color: #86b7ff;
+}
+
+.accountRow button {
+  min-width: 52px;
+}
+
+.tabBar {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  justify-content: space-around;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.7));
+}
+
+.tabBar button {
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 1080px) {
+  .phoneGrid {
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .previewShell {
+    width: min(390px, calc(100vw - 20px));
+  }
+
+  .phoneGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .phone {
+    min-height: 720px;
+  }
+
+  .intro h1 {
+    font-size: 34px;
+  }
+}

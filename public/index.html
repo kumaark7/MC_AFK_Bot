@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AFK Bot Dashboard</title>
+    <link rel="icon" href="/assets/larry-control-icon.png">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="serverIdentity">
+          <img id="serverIcon" class="serverIcon" src="/assets/larry-control-icon.png" alt="Server icon">
+          <div>
+          <h1>AFK Bot Dashboard</h1>
+          <p id="serverLine">Loading server...</p>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="buttonLink" href="/mobile-preview.html">App Preview</a>
+          <button data-command="status">Status</button>
+          <button data-command="restart all">Restart All</button>
+          <button data-account-action="pause" data-name="all">Pause All</button>
+          <button data-account-action="resume" data-name="all">Resume All</button>
+          <button data-command="afk on all">AFK On</button>
+          <button data-command="afk off all">AFK Off</button>
+        </div>
+      </header>
+
+      <section class="panel settingsPanel">
+        <div class="panelHead">
+          <h2>Server</h2>
+        </div>
+        <form class="inlineForm" id="serverForm">
+          <label>
+            Saved
+            <select id="savedServerSelect">
+              <option value="">Select server</option>
+            </select>
+          </label>
+          <label>
+            Name
+            <input id="serverName" autocomplete="off" placeholder="My server">
+          </label>
+          <label>
+            Server ID
+            <input id="serverHost" list="serverHostOptions" autocomplete="off" placeholder="play.example.com">
+            <datalist id="serverHostOptions"></datalist>
+          </label>
+          <label>
+            Port
+            <input id="serverPort" type="number" min="1" max="65535" value="25565">
+          </label>
+          <label>
+            Auth
+            <select id="serverAuth">
+              <option value="offline">offline</option>
+              <option value="microsoft">microsoft</option>
+            </select>
+          </label>
+          <label class="checkLabel">
+            <input id="serverRestart" type="checkbox" checked>
+            Restart bots
+          </label>
+          <button type="submit">Save Server</button>
+        </form>
+      </section>
+
+      <section class="summary" id="summary">
+        <div><span>Profile</span><strong id="profileValue">-</strong></div>
+        <div><span>Bots</span><strong id="botCount">0</strong></div>
+        <div><span>Online</span><strong id="onlineCount">0</strong></div>
+        <div><span>Pathfinding</span><strong id="pathValue">-</strong></div>
+      </section>
+
+      <section class="panel">
+        <div class="panelHead">
+          <h2>Bots</h2>
+          <div class="actions">
+            <button id="refreshBots" type="button">Refresh Bots</button>
+            <button data-command="pos">Refresh Positions</button>
+          </div>
+        </div>
+        <form class="inlineForm botForm" id="botForm">
+          <input id="editingBot" type="hidden">
+          <label>
+            Saved
+            <select id="savedBotSelect">
+              <option value="">Select bot</option>
+            </select>
+          </label>
+          <label>
+            Username
+            <input id="botName" list="botNameOptions" autocomplete="off" placeholder="bot username">
+            <datalist id="botNameOptions"></datalist>
+          </label>
+          <label>
+            Password
+            <input id="botPassword" type="password" autocomplete="new-password" placeholder="new or existing password">
+          </label>
+          <button type="submit" id="saveBot">Add Bot</button>
+          <button type="button" id="cancelEdit" hidden>Cancel</button>
+        </form>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Auth</th>
+                <th>Health</th>
+                <th>Hunger</th>
+                <th>AFK</th>
+                <th>Uptime</th>
+                <th>Reconnects</th>
+                <th>Position</th>
+                <th>Controls</th>
+              </tr>
+            </thead>
+            <tbody id="botRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="grid">
+        <form class="panel commandPanel" id="commandForm">
+          <h2>Command</h2>
+          <label for="commandPreset">Suggestion</label>
+          <select id="commandPreset">
+            <option value="">Choose command</option>
+            <option value="status">status</option>
+            <option value="pos">pos</option>
+            <option value="restart {bot}">restart bot</option>
+            <option value="pause {bot}">pause bot</option>
+            <option value="resume {bot}">resume bot</option>
+            <option value="afk on {bot}">afk on bot</option>
+            <option value="afk off {bot}">afk off bot</option>
+            <option value="debug {bot} 10">debug bot 10</option>
+            <option value="goto {bot} x y z">goto bot x y z</option>
+            <option value="come {bot} player">come bot player</option>
+            <option value="follow {bot} player">follow bot player</option>
+            <option value="stop {bot}">stop bot</option>
+            <option value="{bot} /spawn">bot /spawn</option>
+            <option value="{bot} /tpa player">bot /tpa player</option>
+            <option value="all /spawn">all /spawn</option>
+          </select>
+          <label for="commandBot">Bot</label>
+          <select id="commandBot">
+            <option value="all">all</option>
+          </select>
+          <label for="commandInput">Console command</label>
+          <div class="commandRow">
+            <input id="commandInput" list="commandOptions" autocomplete="off" placeholder="all /spawn">
+            <datalist id="commandOptions"></datalist>
+            <button type="submit">Send</button>
+          </div>
+          <p>Use the same commands as the terminal: <code>goto bot x y z</code>, <code>follow bot player</code>, <code>restart bot</code>.</p>
+        </form>
+
+        <section class="panel logPanel">
+          <div class="panelHead">
+            <h2>Live Logs</h2>
+            <button id="clearLogs" type="button">Clear</button>
+          </div>
+          <pre id="logs"></pre>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

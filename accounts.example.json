@@ -1,0 +1,13 @@
+[
+  {
+    "name": "bot_name_here",
+    "password": "server_password_here",
+    "proxy": {
+      "host": "127.0.0.1",
+      "port": 1080,
+      "type": 5,
+      "username": "",
+      "password": ""
+    }
+  }
+]

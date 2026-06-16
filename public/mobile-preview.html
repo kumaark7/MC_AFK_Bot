@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Larry Control App Preview</title>
+    <link rel="icon" href="/assets/larry-control-icon.png">
+    <link rel="apple-touch-icon" href="/assets/larry-control-icon.png">
+    <link rel="stylesheet" href="/mobile-preview.css">
+  </head>
+  <body>
+    <main class="previewShell">
+      <section class="intro">
+        <img class="appIcon heroIcon" src="/assets/larry-control-icon.png" alt="Larry Control app icon">
+        <div>
+          <h1>Larry Control</h1>
+          <p>Minecraft AFK Bot Controller</p>
+        </div>
+      </section>
+
+      <section class="phoneGrid">
+        <article class="phone active" data-screen="connect">
+          <div class="statusBar"><span>9:41</span><span>LTE 100%</span></div>
+          <div class="screenHeader">
+            <div>
+              <h2>Connect</h2>
+              <p>Start or attach to your bot service</p>
+            </div>
+            <img class="appIcon headerIcon" src="/assets/larry-control-icon.png" alt="">
+          </div>
+
+          <div class="heroPanel">
+            <div>
+              <span class="eyebrow">Server</span>
+              <strong>play.normalsurvival.com</strong>
+              <p>Resolved by Minecraft SRV</p>
+            </div>
+            <img class="serverPreviewIcon" src="/api/server-icon.svg" alt="Server icon preview">
+          </div>
+
+          <div class="connectionCard">
+            <label>Connection Mode</label>
+            <select>
+              <option>Local Dashboard API</option>
+              <option>Trigger Termux Bot</option>
+            </select>
+
+            <label>API URL</label>
+            <input value="http://127.0.0.1:3000">
+
+            <button class="primaryWide">Connect</button>
+            <button class="secondaryWide">Run Bot In Termux</button>
+          </div>
+
+          <div class="noteList">
+            <p><span></span> Termux mode needs RUN_COMMAND permission.</p>
+            <p><span></span> Local API mode connects to the bot dashboard.</p>
+          </div>
+
+          <nav class="tabBar">
+            <button class="selected">Connect</button>
+            <button>Home</button>
+            <button>Bots</button>
+            <button>Commands</button>
+          </nav>
+        </article>
+
+        <article class="phone" data-screen="dashboard">
+          <div class="statusBar"><span>9:41</span><span>WiFi 100%</span></div>
+          <div class="screenHeader">
+            <div>
+              <h2>Dashboard</h2>
+              <p>Overview of your bots and server</p>
+            </div>
+            <img class="appIcon headerIcon" src="/assets/larry-control-icon.png" alt="">
+          </div>
+
+          <div class="heroPanel">
+            <div>
+              <span class="eyebrow">Server Status</span>
+              <strong>Online</strong>
+              <p>play.normalsurvival.com</p>
+            </div>
+            <img class="serverPreviewIcon" src="/api/server-icon.svg" alt="Server icon preview">
+          </div>
+
+          <div class="statsGrid">
+            <div><span>Bots Online</span><strong>2 / 5</strong><p>healthy</p></div>
+            <div><span>System</span><strong>Online</strong><p>all systems running</p></div>
+          </div>
+
+          <h3>Quick Actions</h3>
+          <div class="actionGrid">
+            <button>Start All</button>
+            <button class="red">Stop All</button>
+            <button class="blue">Restart</button>
+            <button class="purple">Command</button>
+          </div>
+
+          <h3>Bots</h3>
+          <div class="botRow online"><span class="avatar avatarGreen">L</span><div><strong>larry</strong><p>Online X:100.5 Y:64 Z:-250.3</p></div><button>Start</button></div>
+          <div class="botRow online"><span class="avatar avatarBlue">M</span><div><strong>miner_alt</strong><p>Online X:-34.2 Y:70 Z:120.7</p></div><button>Start</button></div>
+          <div class="botRow offline"><span class="avatar avatarRed">A</span><div><strong>afk_master</strong><p>Offline</p></div><button>Start</button></div>
+
+          <nav class="tabBar">
+            <button class="selected">Home</button>
+            <button>Bots</button>
+            <button>Commands</button>
+            <button>Logs</button>
+          </nav>
+        </article>
+
+        <article class="phone" data-screen="bots">
+          <div class="statusBar"><span>9:41</span><span>WiFi 100%</span></div>
+          <div class="screenHeader">
+            <div><h2>Bots</h2><p>Manage all your Minecraft bots</p></div>
+            <button class="iconButton">+</button>
+          </div>
+
+          <div class="botCard online">
+            <div class="botTop"><span class="avatar avatarGreen">L</span><div><strong>larry</strong><p>Online • Idle</p><small>X:100.5 Y:64 Z:-250.3</small></div></div>
+            <div class="buttonRow"><button>Start</button><button class="red">Stop</button><button class="blue">Restart</button></div>
+          </div>
+          <div class="botCard online">
+            <div class="botTop"><span class="avatar avatarBlue">M</span><div><strong>miner_alt</strong><p>Online • Idle</p><small>X:-34.2 Y:70 Z:120.7</small></div></div>
+            <div class="buttonRow"><button>Start</button><button class="red">Stop</button><button class="blue">Restart</button></div>
+          </div>
+          <div class="botCard offline">
+            <div class="botTop"><span class="avatar avatarRed">A</span><div><strong>afk_master</strong><p>Offline</p><small>Last seen 2m ago</small></div></div>
+            <div class="buttonRow"><button>Start</button><button class="red">Stop</button><button class="blue">Restart</button></div>
+          </div>
+
+          <nav class="tabBar">
+            <button>Home</button><button class="selected">Bots</button><button>Commands</button><button>Logs</button>
+          </nav>
+        </article>
+
+        <article class="phone" data-screen="commands">
+          <div class="statusBar"><span>9:41</span><span>WiFi 100%</span></div>
+          <div class="screenHeader"><div><h2>Commands</h2><p>Send commands to your bots</p></div></div>
+          <label>Select Bot</label>
+          <div class="selectBox"><strong>larry</strong><span>Steve</span></div>
+          <h3>Quick Commands</h3>
+          <div class="commandGrid">
+            <button>/spawn</button><button>/home</button><button>/shops</button>
+            <button>/ah</button><button>/balance</button><button>/back</button>
+            <button>/tpa</button><button>/tpaaccept</button><button>/rtp</button>
+            <button>/jobs</button><button>/warps</button><button>/kit tools</button>
+          </div>
+          <h3>Custom Command</h3>
+          <div class="sendBox"><input placeholder="Enter command..."><button>&gt;</button></div>
+          <nav class="tabBar">
+            <button>Home</button><button>Bots</button><button class="selected">Commands</button><button>Logs</button>
+          </nav>
+        </article>
+
+        <article class="phone" data-screen="logs">
+          <div class="statusBar"><span>9:41</span><span>WiFi 100%</span></div>
+          <div class="screenHeader"><div><h2>Logs</h2><p>Activity and server logs</p></div></div>
+          <div class="filterRow"><button class="selected">All</button><button>Join</button><button>Chat</button><button>Error</button></div>
+          <div class="logList">
+            <p><span>[21:45:12]</span> <b>larry joined the server</b></p>
+            <p><span>[21:45:15]</span> larry: /login ******</p>
+            <p><span>[21:45:17]</span> <b>larry logged in successfully</b></p>
+            <p><span>[21:46:20]</span> <em>afk_master disconnected: Kicked</em></p>
+            <p><span>[21:47:10]</span> farm_bot: /spawn</p>
+          </div>
+          <nav class="tabBar">
+            <button>Home</button><button>Bots</button><button>Commands</button><button class="selected">Logs</button>
+          </nav>
+        </article>
+
+        <article class="phone" data-screen="accounts">
+          <div class="statusBar"><span>9:41</span><span>WiFi 100%</span></div>
+          <div class="screenHeader">
+            <div><h2>Accounts</h2><p>Manage your bot accounts</p></div>
+            <button class="iconButton">+</button>
+          </div>
+          <div class="accountRow"><span class="avatar avatarGreen">L</span><div><strong>larry</strong><p>Password: ••••••••</p></div><button>Copy</button><button class="red">Delete</button></div>
+          <div class="accountRow"><span class="avatar avatarBlue">M</span><div><strong>miner_alt</strong><p>Password: ••••••••</p></div><button>Copy</button><button class="red">Delete</button></div>
+          <div class="accountRow"><span class="avatar avatarRed">A</span><div><strong>afk_master</strong><p>Password: ••••••••</p></div><button>Copy</button><button class="red">Delete</button></div>
+          <nav class="tabBar">
+            <button>Home</button><button>Bots</button><button>Commands</button><button class="selected">Accounts</button>
+          </nav>
+        </article>
+      </section>
+    </main>
+    <script>
+      const serverPreviewIcons = [...document.querySelectorAll('.serverPreviewIcon')]
+
+      function applyPreviewServerIcon(urls) {
+        serverPreviewIcons.forEach(icon => {
+          const list = [...urls, '/api/server-icon.svg', '/assets/larry-control-icon.png'].filter(Boolean)
+
+          icon.dataset.iconIndex = '0'
+          icon.dataset.iconUrls = JSON.stringify(list)
+          icon.onerror = () => {
+            const nextIndex = Number(icon.dataset.iconIndex || 0) + 1
+            const nextUrl = JSON.parse(icon.dataset.iconUrls || '[]')[nextIndex]
+
+            icon.dataset.iconIndex = String(nextIndex)
+
+            if (nextUrl) {
+              icon.src = nextUrl
+            } else {
+              icon.onerror = null
+            }
+          }
+          icon.src = list[0]
+        })
+      }
+
+      fetch('/api/status')
+        .then(response => response.ok ? response.json() : null)
+        .then(status => {
+          if (!status) return
+
+          applyPreviewServerIcon([
+            status.serverInfo && status.serverInfo.favicon,
+            ...(status.serverIconUrls || [])
+          ])
+        })
+        .catch(() => {})
+    </script>
+  </body>
+</html>

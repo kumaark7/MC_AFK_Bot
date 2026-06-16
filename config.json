@@ -1,0 +1,46 @@
+{
+  "activeProfile": "default",
+  "profiles": {
+    "default": {
+      "server": {
+        "host": "play.normalsurvival.com",
+        "port": 25565,
+        "auth": "offline"
+      },
+      "ui": {
+        "enabled": true,
+        "host": "127.0.0.1",
+        "port": 3000
+      },
+      "savedServers": [
+        {
+          "name": "Test server",
+          "host": "play.normalsurvival.com",
+          "port": 25565,
+          "auth": "offline"
+        }
+      ],
+      "timings": {
+        "joinDelayMs": 5000,
+        "reconnectDelayMs": 5000,
+        "connectTimeoutMs": 15000,
+        "manualRestartDelayMs": 1500,
+        "loginDelayMs": 2000,
+        "afkIntervalMs": 30000,
+        "debugAfterCommandMs": 5000
+      },
+      "features": {
+        "antiAfk": true,
+        "autoLogin": true,
+        "autoRegister": true,
+        "autoRespawn": true,
+        "chatLogger": true,
+        "pathfinding": true
+      },
+      "auth": {
+        "registerCommand": "/register {password} {password}",
+        "loginCommand": "/login {password}"
+      }
+    }
+  }
+}

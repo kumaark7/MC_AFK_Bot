@@ -1,0 +1,16 @@
+{
+  "name": "afkbot",
+  "version": "1.0.0",
+  "description": "Multi-account Mineflayer AFK bot controller.",
+  "main": "bot.js",
+  "private": true,
+  "scripts": {
+    "start": "node bot.js",
+    "check": "node --check bot.js"
+  },
+  "dependencies": {
+    "mineflayer": "^4.37.1",
+    "mineflayer-pathfinder": "^2.4.5",
+    "socks": "^2.8.9"
+  }
+}
