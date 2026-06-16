@@ -38,7 +38,7 @@ class ControlHome extends StatefulWidget {
 }
 
 class _ControlHomeState extends State<ControlHome> {
-  final _apiController = TextEditingController(text: 'http://10.0.2.2:3000');
+  final _apiController = TextEditingController(text: 'http://192.168.31.224:3000');
   final _commandController = TextEditingController();
   final _http = HttpClient()..connectionTimeout = const Duration(seconds: 6);
   final _events = <String>[];
@@ -252,9 +252,14 @@ class _ControlHomeState extends State<ControlHome> {
                 controller: _apiController,
                 decoration: const InputDecoration(
                   labelText: 'Dashboard API URL',
-                  hintText: 'http://10.0.2.2:3000',
+                  hintText: 'http://PC_WIFI_IP:3000',
                   border: OutlineInputBorder(),
                 ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Real phone: use your PC Wi-Fi IP. Emulator only: use 10.0.2.2.',
+                style: TextStyle(color: Color(0xFF9BB6C8), fontSize: 12),
               ),
               const SizedBox(height: 12),
               FilledButton.icon(
