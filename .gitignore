@@ -1,5 +1,6 @@
 node_modules/
 accounts.json
 logs/
+dist/
 npm-debug.log*
 *.log
