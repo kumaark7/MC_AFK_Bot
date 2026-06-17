@@ -43,6 +43,12 @@ class _ControlHomeState extends State<ControlHome> {
 
   final _apiController = TextEditingController(text: 'http://127.0.0.1:3000');
   final _commandController = TextEditingController();
+  final _accountNameController = TextEditingController();
+  final _accountPasswordController = TextEditingController();
+  final _serverNameController = TextEditingController(text: 'Normal Survival');
+  final _serverHostController = TextEditingController(text: 'play.normalsurvival.com');
+  final _serverPortController = TextEditingController(text: '25565');
+  String _serverAuth = 'offline';
   final _http = HttpClient()..connectionTimeout = const Duration(seconds: 6);
   final _events = <String>[];
   Map<String, dynamic>? _status;
@@ -65,6 +71,11 @@ class _ControlHomeState extends State<ControlHome> {
     _refreshTimer?.cancel();
     _apiController.dispose();
     _commandController.dispose();
+    _accountNameController.dispose();
+    _accountPasswordController.dispose();
+    _serverNameController.dispose();
+    _serverHostController.dispose();
+    _serverPortController.dispose();
     _http.close(force: true);
     super.dispose();
   }
@@ -95,8 +106,8 @@ class _ControlHomeState extends State<ControlHome> {
     });
 
     try {
-      final result = await _platform.invokeMethod<String>('startBot');
-      _addEvent(result ?? 'Termux command sent');
+      final result = await _runTermux('cd ~/MC_AFK_Bot && bash termux/start-bot.sh');
+      _addEvent(result);
       await Future<void>.delayed(const Duration(seconds: 6));
       await _connect();
     } on PlatformException catch (err) {
@@ -106,6 +117,133 @@ class _ControlHomeState extends State<ControlHome> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<String> _runTermux(String command, {bool background = true}) async {
+    final result = await _platform.invokeMethod<String>('runCommand', {
+      'command': command,
+      'background': background,
+    });
+
+    return result ?? 'Termux command sent';
+  }
+
+  Future<void> _setupRuntime() async {
+    const command = '''
+pkg update -y
+pkg install -y git nodejs
+if [ ! -d "\$HOME/MC_AFK_Bot/.git" ]; then
+  rm -rf "\$HOME/MC_AFK_Bot"
+  git clone https://github.com/kumaark7/MC_AFK_Bot.git "\$HOME/MC_AFK_Bot"
+fi
+cd "\$HOME/MC_AFK_Bot"
+git pull --ff-only || true
+bash termux/setup-termux.sh
+''';
+
+    await _runTermux(command);
+    _setMessage('Setup command sent. Restart Termux once after it finishes.');
+  }
+
+  Future<void> _updateRuntime() async {
+    const command = '''
+cd "\$HOME/MC_AFK_Bot"
+git pull --ff-only
+npm install
+chmod +x termux/*.sh
+''';
+
+    await _runTermux(command);
+    _setMessage('Update command sent to Termux.');
+  }
+
+  Future<void> _saveServerToTermux() async {
+    final name = _serverNameController.text.trim().isEmpty ? 'Minecraft Server' : _serverNameController.text.trim();
+    final host = _serverHostController.text.trim();
+    final port = int.tryParse(_serverPortController.text.trim()) ?? 25565;
+
+    if (host.isEmpty) {
+      _setMessage('Server host is required.');
+      return;
+    }
+
+    final config = {
+      'activeProfile': 'default',
+      'profiles': {
+        'default': {
+          'server': {
+            'host': host,
+            'port': port,
+            'auth': _serverAuth,
+          },
+          'ui': {
+            'enabled': true,
+            'host': '127.0.0.1',
+            'port': 3000,
+          },
+          'savedServers': [
+            {
+              'name': name,
+              'host': host,
+              'port': port,
+              'auth': _serverAuth,
+            }
+          ],
+          'timings': {
+            'joinDelayMs': 5000,
+            'reconnectDelayMs': 5000,
+            'connectTimeoutMs': 15000,
+            'manualRestartDelayMs': 1500,
+            'loginDelayMs': 2000,
+            'afkIntervalMs': 30000,
+            'debugAfterCommandMs': 5000,
+          },
+          'features': {
+            'antiAfk': true,
+            'autoLogin': true,
+            'autoRegister': true,
+            'autoRespawn': true,
+            'chatLogger': true,
+            'pathfinding': true,
+          },
+          'auth': {
+            'registerCommand': '/register {password} {password}',
+            'loginCommand': '/login {password}',
+          },
+        }
+      },
+    };
+
+    await _writeTermuxFile('config.json', jsonEncode(config));
+    _setMessage('Server config saved to Termux.');
+  }
+
+  Future<void> _saveAccountToTermux() async {
+    final name = _accountNameController.text.trim();
+    final password = _accountPasswordController.text;
+
+    if (name.isEmpty || password.isEmpty) {
+      _setMessage('Bot username and password are required.');
+      return;
+    }
+
+    final accounts = [
+      {
+        'name': name,
+        'password': password,
+      }
+    ];
+
+    await _writeTermuxFile('accounts.json', jsonEncode(accounts));
+    _accountPasswordController.clear();
+    _setMessage('Bot account saved to Termux.');
+  }
+
+  Future<void> _writeTermuxFile(String fileName, String content) async {
+    final encoded = base64Encode(utf8.encode(content));
+    final command = "cd ~/MC_AFK_Bot && printf '%s' '$encoded' | base64 -d > '$fileName'";
+
+    await _runTermux(command);
   }
 
   Future<void> _refreshStatus({bool silent = false}) async {
@@ -202,6 +340,7 @@ class _ControlHomeState extends State<ControlHome> {
   Widget build(BuildContext context) {
     final pages = [
       _dashboardPage(),
+      _setupPage(),
       _botsPage(),
       _commandsPage(),
       _logsPage(),
@@ -223,6 +362,7 @@ class _ControlHomeState extends State<ControlHome> {
         indicatorColor: const Color(0x332EFF55),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.build_circle_outlined), label: 'Setup'),
           NavigationDestination(icon: Icon(Icons.groups_2_outlined), label: 'Bots'),
           NavigationDestination(icon: Icon(Icons.terminal_outlined), label: 'Commands'),
           NavigationDestination(icon: Icon(Icons.article_outlined), label: 'Logs'),
@@ -282,7 +422,7 @@ class _ControlHomeState extends State<ControlHome> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Termux mode runs the bot on this phone and connects to 127.0.0.1. PC mode uses your PC Wi-Fi IP.',
+                'Use Setup for phone-only mode. PC mode can still use your PC Wi-Fi IP.',
                 style: TextStyle(color: Color(0xFF9BB6C8), fontSize: 12),
               ),
               const SizedBox(height: 12),
@@ -346,6 +486,136 @@ class _ControlHomeState extends State<ControlHome> {
             _quickTile('Restart All', Icons.restart_alt, () => _run(() => _restart('all'))),
             _quickTile('Status', Icons.monitor_heart_outlined, () => _run(() => _refreshStatus())),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _setupPage() {
+    return ListView(
+      padding: const EdgeInsets.all(18),
+      children: [
+        const Text('Setup', style: _screenTitleStyle),
+        const SizedBox(height: 12),
+        _panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Runtime', style: _titleStyle),
+              const SizedBox(height: 8),
+              const Text(
+                'Use this once on a new phone. It installs Node, clones the bot repo, installs packages, and enables Termux app commands.',
+                style: TextStyle(color: Color(0xFF9BB6C8)),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: _loading ? null : () => _run(_setupRuntime),
+                icon: const Icon(Icons.download),
+                label: const Text('Setup Bot Runtime'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _loading ? null : () => _run(_updateRuntime),
+                icon: const Icon(Icons.system_update_alt),
+                label: const Text('Update Runtime'),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        _panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Server', style: _titleStyle),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _serverNameController,
+                decoration: const InputDecoration(labelText: 'Server Name', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _serverHostController,
+                decoration: const InputDecoration(labelText: 'Server Address', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _serverPortController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(labelText: 'Port', border: OutlineInputBorder()),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _serverAuth,
+                      decoration: const InputDecoration(labelText: 'Auth', border: OutlineInputBorder()),
+                      items: const [
+                        DropdownMenuItem(value: 'offline', child: Text('offline')),
+                        DropdownMenuItem(value: 'microsoft', child: Text('microsoft')),
+                      ],
+                      onChanged: (value) => setState(() => _serverAuth = value ?? 'offline'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: _loading ? null : () => _run(_saveServerToTermux),
+                icon: const Icon(Icons.save),
+                label: const Text('Save Server To Termux'),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        _panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Bot Account', style: _titleStyle),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _accountNameController,
+                decoration: const InputDecoration(labelText: 'Bot Username', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _accountPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'Server Password', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: _loading ? null : () => _run(_saveAccountToTermux),
+                icon: const Icon(Icons.person_add_alt),
+                label: const Text('Save Bot Account'),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        _panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Start', style: _titleStyle),
+              const SizedBox(height: 8),
+              const Text(
+                'After runtime, server, and account are saved, start the Termux bot service and connect locally.',
+                style: TextStyle(color: Color(0xFF9BB6C8)),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: _loading ? null : _startTermuxAndConnect,
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('Start Termux Bot'),
+              ),
+            ],
+          ),
         ),
       ],
     );

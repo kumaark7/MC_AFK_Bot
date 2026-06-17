@@ -101,13 +101,23 @@ Passwords are not displayed back in the dashboard. When editing a bot, leave the
 
 ## Android App With Termux
 
-The Android APK can start the bot inside Termux, then connect to the local dashboard API at:
+The Android APK can setup and start the bot inside Termux, then connect to the local dashboard API at:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-One-time Termux setup on the phone:
+Recommended phone flow:
+
+1. Install Termux.
+2. Open Larry Control.
+3. Go to `Setup`.
+4. Tap `Setup Bot Runtime`.
+5. Restart Termux once when setup finishes.
+6. Use the `Setup` screen to save server and bot account details.
+7. Tap `Start Termux Bot`.
+
+Manual Termux setup is still available:
 
 ```bash
 pkg update -y

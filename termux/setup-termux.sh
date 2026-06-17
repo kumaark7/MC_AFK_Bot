@@ -17,6 +17,6 @@ if ! grep -q '^allow-external-apps *= *true' "$HOME/.termux/termux.properties"; 
   printf '\nallow-external-apps = true\n' >> "$HOME/.termux/termux.properties"
 fi
 
-chmod +x termux/start-bot.sh
+chmod +x termux/*.sh
 
 echo "Termux setup done. Restart Termux once, then use Start Termux in Larry Control."

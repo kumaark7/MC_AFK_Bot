@@ -13,22 +13,32 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "larry_control/termux")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
-                    "startBot" -> startBotInTermux(result)
+                    "runCommand" -> {
+                        val command = call.argument<String>("command")
+                        val background = call.argument<Boolean>("background") ?: true
+
+                        if (command.isNullOrBlank()) {
+                            result.error("EMPTY_COMMAND", "No Termux command provided.", null)
+                        } else {
+                            runCommandInTermux(command, background, result)
+                        }
+                    }
+                    "startBot" -> runCommandInTermux("cd ~/MC_AFK_Bot && bash termux/start-bot.sh", true, result)
                     else -> result.notImplemented()
                 }
             }
     }
 
-    private fun startBotInTermux(result: MethodChannel.Result) {
+    private fun runCommandInTermux(command: String, background: Boolean, result: MethodChannel.Result) {
         val intent = Intent("com.termux.RUN_COMMAND").apply {
             setPackage("com.termux")
             putExtra("com.termux.RUN_COMMAND_PATH", "/data/data/com.termux/files/usr/bin/bash")
             putExtra(
                 "com.termux.RUN_COMMAND_ARGUMENTS",
-                arrayOf("-lc", "cd ~/MC_AFK_Bot && bash termux/start-bot.sh")
+                arrayOf("-lc", command)
             )
-            putExtra("com.termux.RUN_COMMAND_WORKDIR", "/data/data/com.termux/files/home/MC_AFK_Bot")
-            putExtra("com.termux.RUN_COMMAND_BACKGROUND", true)
+            putExtra("com.termux.RUN_COMMAND_WORKDIR", "/data/data/com.termux/files/home")
+            putExtra("com.termux.RUN_COMMAND_BACKGROUND", background)
             putExtra("com.termux.RUN_COMMAND_SESSION_ACTION", "0")
         }
 
