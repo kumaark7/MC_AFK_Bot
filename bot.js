@@ -110,6 +110,8 @@ function loadConfig() {
 }
 
 function loadAccounts() {
+  if (!fs.existsSync(ACCOUNTS_PATH)) return []
+
   return JSON.parse(fs.readFileSync(ACCOUNTS_PATH, 'utf8'))
 }
 
