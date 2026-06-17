@@ -2,11 +2,14 @@ package com.kumaark7.android_app
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private val termuxRunCommandPermission = "com.termux.permission.RUN_COMMAND"
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -30,8 +33,19 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun runCommandInTermux(command: String, background: Boolean, result: MethodChannel.Result) {
+        if (checkSelfPermission(termuxRunCommandPermission) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(termuxRunCommandPermission), 3000)
+            result.error(
+                "TERMUX_PERMISSION",
+                "Allow Termux command permission, then tap the button again.",
+                null
+            )
+            return
+        }
+
         val intent = Intent("com.termux.RUN_COMMAND").apply {
             setPackage("com.termux")
+            setClassName("com.termux", "com.termux.app.RunCommandService")
             putExtra("com.termux.RUN_COMMAND_PATH", "/data/data/com.termux/files/usr/bin/bash")
             putExtra(
                 "com.termux.RUN_COMMAND_ARGUMENTS",
@@ -43,7 +57,7 @@ class MainActivity : FlutterActivity() {
         }
 
         try {
-            startActivity(intent)
+            startService(intent)
             result.success("Termux command sent")
         } catch (err: ActivityNotFoundException) {
             result.error("TERMUX_NOT_FOUND", "Install Termux first.", null)
