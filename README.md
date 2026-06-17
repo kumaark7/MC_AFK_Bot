@@ -1,6 +1,6 @@
 # Larry Control
 
-Official Version 1 of Larry Control, a local Android + Termux Minecraft AFK bot controller for `play.normalsurvival.com`.
+Official Version 1 of Larry Control, a local Android + Termux Minecraft AFK bot controller for `Server`.
 
 ## Version 1 Scope
 
