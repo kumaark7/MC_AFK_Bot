@@ -116,7 +116,17 @@ class _ControlHomeState extends State<ControlHome> {
     });
 
     try {
-      final result = await _runTermux('cd ~/MC_AFK_Bot && bash termux/start-bot.sh', background: false);
+      final result = await _runTermux('''
+echo "Larry Control start check"
+echo "HOME=\$HOME"
+command -v node || true
+ls -la ~/MC_AFK_Bot || true
+cd ~/MC_AFK_Bot || exit 1
+ls -la termux || true
+bash termux/start-bot.sh
+echo "If the API is not online, check logs/termux-bot.log"
+tail -n 20 logs/termux-bot.log 2>/dev/null || true
+''', background: false);
       _addEvent(result);
       await Future<void>.delayed(const Duration(seconds: 6));
       await _connect();

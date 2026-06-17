@@ -3,11 +3,14 @@ package com.kumaark7.android_app
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private val tag = "LarryControl"
     private val termuxRunCommandPermission = "com.termux.permission.RUN_COMMAND"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -74,7 +77,13 @@ class MainActivity : FlutterActivity() {
         }
 
         try {
-            startService(intent)
+            Log.i(tag, "Sending Termux command background=$background command=$command")
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
             result.success("Termux command sent")
         } catch (err: ActivityNotFoundException) {
             result.error("TERMUX_NOT_FOUND", "Install Termux first.", null)
