@@ -112,10 +112,13 @@ Recommended phone flow:
 1. Install Termux.
 2. Open Larry Control.
 3. Go to `Setup`.
-4. Tap `Setup Bot Runtime`.
-5. Restart Termux once when setup finishes.
-6. Use the `Setup` screen to save server and bot account details.
-7. Tap `Start Termux Bot`.
+4. Tap `Copy Command`, tap `Open Termux`, paste the command, and press Enter.
+5. Restart Termux once.
+6. Return to Larry Control and tap `Setup Bot Runtime`.
+7. Use the `Setup` screen to save server and bot account details.
+8. Tap `Start Termux Bot`.
+
+This first Termux command is needed because fresh Termux installs block external app commands until `allow-external-apps = true` exists inside Termux.
 
 Manual Termux setup is still available:
 

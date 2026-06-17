@@ -26,10 +26,27 @@ class MainActivity : FlutterActivity() {
                             runCommandInTermux(command, background, result)
                         }
                     }
+                    "openTermux" -> openTermux(result)
                     "startBot" -> runCommandInTermux("cd ~/MC_AFK_Bot && bash termux/start-bot.sh", true, result)
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    private fun openTermux(result: MethodChannel.Result) {
+        try {
+            val launchIntent = packageManager.getLaunchIntentForPackage("com.termux")
+
+            if (launchIntent == null) {
+                result.error("TERMUX_NOT_FOUND", "Install Termux first.", null)
+                return
+            }
+
+            startActivity(launchIntent)
+            result.success("Termux opened")
+        } catch (err: Exception) {
+            result.error("TERMUX_ERROR", err.message ?: "Unable to open Termux.", null)
+        }
     }
 
     private fun runCommandInTermux(command: String, background: Boolean, result: MethodChannel.Result) {

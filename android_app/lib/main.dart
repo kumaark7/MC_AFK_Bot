@@ -41,6 +41,8 @@ class ControlHome extends StatefulWidget {
 class _ControlHomeState extends State<ControlHome> {
   static const _platform = MethodChannel('larry_control/termux');
   static const _localApiBase = 'http://127.0.0.1:3000';
+  static const _firstTimeTermuxCommand =
+      "mkdir -p ~/.termux && grep -q '^allow-external-apps *= *true' ~/.termux/termux.properties 2>/dev/null || echo 'allow-external-apps = true' >> ~/.termux/termux.properties";
 
   final _commandController = TextEditingController();
   final _accountNameController = TextEditingController();
@@ -124,6 +126,16 @@ class _ControlHomeState extends State<ControlHome> {
     });
 
     return result ?? 'Termux command sent';
+  }
+
+  Future<void> _openTermux() async {
+    await _platform.invokeMethod<String>('openTermux');
+    _setMessage('Termux opened.');
+  }
+
+  Future<void> _copyFirstTimeCommand() async {
+    await Clipboard.setData(const ClipboardData(text: _firstTimeTermuxCommand));
+    _setMessage('First-time Termux command copied. Paste it in Termux, press Enter, then restart Termux once.');
   }
 
   Future<void> _setupRuntime() async {
@@ -440,19 +452,19 @@ chmod +x termux/*.sh
                 children: [
                   Expanded(
                     child: FilledButton.icon(
-                      onPressed: _loading ? null : _connect,
-                      icon: _loading
-                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Icon(Icons.power_settings_new),
-                      label: const Text('Connect'),
+                      onPressed: _loading ? null : _startTermuxAndConnect,
+                      icon: const Icon(Icons.terminal),
+                      label: const Text('Start Termux Bot'),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: _loading ? null : _startTermuxAndConnect,
-                      icon: const Icon(Icons.terminal),
-                      label: const Text('Start Termux'),
+                      onPressed: _loading ? null : _connect,
+                      icon: _loading
+                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Icon(Icons.refresh),
+                      label: const Text('Reconnect'),
                     ),
                   ),
                 ],
@@ -507,6 +519,40 @@ chmod +x termux/*.sh
       children: [
         const Text('Setup', style: _screenTitleStyle),
         const SizedBox(height: 12),
+        _panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('First Time Termux Permission', style: _titleStyle),
+              const SizedBox(height: 8),
+              const Text(
+                'On a fresh Termux install, Android blocks app commands until this Termux setting exists. Copy the command, open Termux, paste it, press Enter, then restart Termux once.',
+                style: TextStyle(color: Color(0xFF9BB6C8)),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _run(_copyFirstTimeCommand),
+                      icon: const Icon(Icons.copy),
+                      label: const Text('Copy Command'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _run(_openTermux),
+                      icon: const Icon(Icons.open_in_new),
+                      label: const Text('Open Termux'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
         _panel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -637,7 +683,12 @@ chmod +x termux/*.sh
       children: [
         const Text('Bots', style: _screenTitleStyle),
         const SizedBox(height: 12),
-        if (_bots.isEmpty) _panel(child: const Text('Connect to the dashboard API to load bots.')),
+        if (_bots.isEmpty)
+          _panel(
+            child: const Text(
+              'Bot service is offline. Go to Setup, finish Termux setup, then tap Start Termux Bot.',
+            ),
+          ),
         for (final bot in _bots) _botCard(bot),
       ],
     );

@@ -6,6 +6,6 @@ void main() {
     await tester.pumpWidget(const LarryControlApp());
 
     expect(find.text('Larry Control'), findsOneWidget);
-    expect(find.text('Connect'), findsOneWidget);
+    expect(find.text('Start Termux Bot'), findsOneWidget);
   });
 }
