@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const LarryControlApp());
@@ -38,7 +39,9 @@ class ControlHome extends StatefulWidget {
 }
 
 class _ControlHomeState extends State<ControlHome> {
-  final _apiController = TextEditingController(text: 'http://192.168.31.224:3000');
+  static const _platform = MethodChannel('larry_control/termux');
+
+  final _apiController = TextEditingController(text: 'http://127.0.0.1:3000');
   final _commandController = TextEditingController();
   final _http = HttpClient()..connectionTimeout = const Duration(seconds: 6);
   final _events = <String>[];
@@ -79,6 +82,27 @@ class _ControlHomeState extends State<ControlHome> {
       _addEvent('Connected to $_apiBase');
     } catch (err) {
       _setMessage('Connection failed: $err');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _startTermuxAndConnect() async {
+    setState(() {
+      _loading = true;
+      _message = 'Starting Termux bot service...';
+      _apiController.text = 'http://127.0.0.1:3000';
+    });
+
+    try {
+      final result = await _platform.invokeMethod<String>('startBot');
+      _addEvent(result ?? 'Termux command sent');
+      await Future<void>.delayed(const Duration(seconds: 6));
+      await _connect();
+    } on PlatformException catch (err) {
+      _setMessage('Termux start failed: ${err.message ?? err.code}');
+    } catch (err) {
+      _setMessage('Termux start failed: $err');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -258,16 +282,30 @@ class _ControlHomeState extends State<ControlHome> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Real phone: use your PC Wi-Fi IP. Emulator only: use 10.0.2.2.',
+                'Termux mode runs the bot on this phone and connects to 127.0.0.1. PC mode uses your PC Wi-Fi IP.',
                 style: TextStyle(color: Color(0xFF9BB6C8), fontSize: 12),
               ),
               const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: _loading ? null : _connect,
-                icon: _loading
-                    ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.power_settings_new),
-                label: const Text('Connect'),
+              Row(
+                children: [
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: _loading ? null : _connect,
+                      icon: _loading
+                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Icon(Icons.power_settings_new),
+                      label: const Text('Connect'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _loading ? null : _startTermuxAndConnect,
+                      icon: const Icon(Icons.terminal),
+                      label: const Text('Start Termux'),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               Text(_message, style: const TextStyle(color: Color(0xFF9BB6C8))),

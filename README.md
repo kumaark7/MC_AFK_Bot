@@ -99,6 +99,41 @@ It also includes:
 
 Passwords are not displayed back in the dashboard. When editing a bot, leave the password field blank to keep the saved password.
 
+## Android App With Termux
+
+The Android APK can start the bot inside Termux, then connect to the local dashboard API at:
+
+```text
+http://127.0.0.1:3000
+```
+
+One-time Termux setup on the phone:
+
+```bash
+pkg update -y
+pkg install -y git nodejs
+cd ~
+git clone https://github.com/kumaark7/MC_AFK_Bot.git
+cd MC_AFK_Bot
+bash termux/setup-termux.sh
+```
+
+Copy your real `accounts.json` into `~/MC_AFK_Bot/accounts.json` in Termux before starting bots.
+
+Important: after setup, restart Termux once so `allow-external-apps = true` takes effect.
+
+Then open Larry Control and tap `Start Termux`. The app sends Termux this command in the background:
+
+```bash
+cd ~/MC_AFK_Bot && bash termux/start-bot.sh
+```
+
+If you are controlling a bot server running on your PC instead, use your PC Wi-Fi URL in the app:
+
+```text
+http://YOUR_PC_WIFI_IP:3000
+```
+
 ## Optional Proxy Format
 
 Add this inside an account only if you need a proxy:
