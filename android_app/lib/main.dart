@@ -40,8 +40,8 @@ class ControlHome extends StatefulWidget {
 
 class _ControlHomeState extends State<ControlHome> {
   static const _platform = MethodChannel('larry_control/termux');
+  static const _localApiBase = 'http://127.0.0.1:3000';
 
-  final _apiController = TextEditingController(text: 'http://127.0.0.1:3000');
   final _commandController = TextEditingController();
   final _accountNameController = TextEditingController();
   final _accountPasswordController = TextEditingController();
@@ -64,12 +64,11 @@ class _ControlHomeState extends State<ControlHome> {
     return raw.whereType<Map>().map((bot) => Map<String, dynamic>.from(bot)).toList();
   }
 
-  String get _apiBase => _apiController.text.trim().replaceFirst(RegExp(r'/+$'), '');
+  String get _apiBase => _localApiBase;
 
   @override
   void dispose() {
     _refreshTimer?.cancel();
-    _apiController.dispose();
     _commandController.dispose();
     _accountNameController.dispose();
     _accountPasswordController.dispose();
@@ -102,7 +101,6 @@ class _ControlHomeState extends State<ControlHome> {
     setState(() {
       _loading = true;
       _message = 'Starting Termux bot service...';
-      _apiController.text = 'http://127.0.0.1:3000';
     });
 
     try {
@@ -412,17 +410,29 @@ chmod +x termux/*.sh
             children: [
               const Text('Connection', style: _titleStyle),
               const SizedBox(height: 12),
-              TextField(
-                controller: _apiController,
-                decoration: const InputDecoration(
-                  labelText: 'Dashboard API URL',
-                  hintText: 'http://PC_WIFI_IP:3000',
-                  border: OutlineInputBorder(),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: _boxDecoration(borderColor: const Color(0x2236D66A)),
+                child: const Row(
+                  children: [
+                    Icon(Icons.smartphone, color: Color(0xFF2EFF55)),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Local Termux API', style: TextStyle(fontWeight: FontWeight.w800)),
+                          Text('127.0.0.1:3000 on this phone', style: TextStyle(color: Color(0xFF9BB6C8))),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 8),
               const Text(
-                'Use Setup for phone-only mode. PC mode can still use your PC Wi-Fi IP.',
+                'No IP editing needed. Use Setup first, then Start Termux.',
                 style: TextStyle(color: Color(0xFF9BB6C8), fontSize: 12),
               ),
               const SizedBox(height: 12),
