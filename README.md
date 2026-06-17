@@ -1,6 +1,15 @@
-# AFK Bot
+# Larry Control
 
-Multi-account Mineflayer AFK bot for `play.normalsurvival.com`.
+Official Version 1 of Larry Control, a local Android + Termux Minecraft AFK bot controller for `play.normalsurvival.com`.
+
+## Version 1 Scope
+
+- Android app connects to the local Termux API at `http://127.0.0.1:3000`.
+- Termux runs the Node.js Mineflayer bot backend on the same phone.
+- Server and bot account setup can be done from the Android app.
+- New bot accounts can auto-register, and existing accounts can auto-login.
+- Bots support start, pause, resume, restart, remove, reconnect, health/hunger status, logs, and command sending.
+- Browser dashboard remains available for local desktop or Termux testing.
 
 ## Setup
 
