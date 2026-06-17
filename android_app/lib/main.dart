@@ -244,8 +244,19 @@ chmod +x termux/*.sh
       },
     };
 
-    await _writeTermuxFile('config.json', jsonEncode(config));
-    _setMessage('Server config saved to Termux.');
+    try {
+      await _postJson('/api/server', {
+        'name': name,
+        'host': host,
+        'port': port,
+        'auth': _serverAuth,
+      });
+      await _refreshStatus(silent: true);
+      _setMessage('Server saved and applied.');
+    } catch (_) {
+      await _writeTermuxFile('config.json', jsonEncode(config));
+      _setMessage('Server saved to Termux. Start or reconnect the bot service to apply it.');
+    }
   }
 
   Future<void> _saveAccountToTermux() async {
@@ -257,16 +268,20 @@ chmod +x termux/*.sh
       return;
     }
 
-    final accounts = [
-      {
-        'name': name,
-        'password': password,
-      }
-    ];
-
-    await _writeTermuxFile('accounts.json', jsonEncode(accounts));
-    _accountPasswordController.clear();
-    _setMessage('Bot account saved to Termux.');
+    try {
+      await _postJson('/api/accounts', {
+        'action': 'add',
+        'account': {
+          'name': name,
+          'password': password,
+        },
+      });
+      _accountPasswordController.clear();
+      await _refreshStatus(silent: true);
+      _setMessage('Bot account added and started.');
+    } catch (err) {
+      _setMessage('Add bot failed: $err');
+    }
   }
 
   Future<void> _writeTermuxFile(String fileName, String content) async {
