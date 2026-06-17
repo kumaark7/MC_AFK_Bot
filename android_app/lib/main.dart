@@ -43,6 +43,14 @@ class _ControlHomeState extends State<ControlHome> {
   static const _localApiBase = 'http://127.0.0.1:3000';
   static const _firstTimeTermuxCommand =
       "mkdir -p ~/.termux; echo 'allow-external-apps = true' > ~/.termux/termux.properties; cat ~/.termux/termux.properties";
+  static const _preStartCheckCommand = '''
+echo "Larry Control start check"
+echo "HOME=\$HOME"
+command -v node || true
+ls -la ~/MC_AFK_Bot || true
+cd ~/MC_AFK_Bot || exit 1
+ls -la termux || true
+''';
 
   final _commandController = TextEditingController();
   final _accountNameController = TextEditingController();
@@ -116,17 +124,7 @@ class _ControlHomeState extends State<ControlHome> {
     });
 
     try {
-      final result = await _runTermux('''
-echo "Larry Control start check"
-echo "HOME=\$HOME"
-command -v node || true
-ls -la ~/MC_AFK_Bot || true
-cd ~/MC_AFK_Bot || exit 1
-ls -la termux || true
-bash termux/start-bot.sh
-echo "If the API is not online, check logs/termux-bot.log"
-tail -n 20 logs/termux-bot.log 2>/dev/null || true
-''', background: false);
+      final result = await _runTermux('cd ~/MC_AFK_Bot && bash termux/start-bot.sh', background: false);
       _addEvent(result);
       await Future<void>.delayed(const Duration(seconds: 6));
       await _connect();
@@ -156,6 +154,11 @@ tail -n 20 logs/termux-bot.log 2>/dev/null || true
   Future<void> _copyFirstTimeCommand() async {
     await Clipboard.setData(const ClipboardData(text: _firstTimeTermuxCommand));
     _setMessage('First-time Termux command copied. Paste it in Termux, press Enter, then restart Termux once.');
+  }
+
+  Future<void> _copyPreStartCheckCommand() async {
+    await Clipboard.setData(const ClipboardData(text: _preStartCheckCommand));
+    _setMessage('Pre-start check copied. Paste it in Termux to verify Node and bot files before starting.');
   }
 
   Future<void> _setupRuntime() async {
@@ -609,6 +612,12 @@ chmod +x termux/*.sh
                 onPressed: _loading ? null : () => _run(_updateRuntime),
                 icon: const Icon(Icons.system_update_alt),
                 label: const Text('Update Runtime'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => _run(_copyPreStartCheckCommand),
+                icon: const Icon(Icons.copy),
+                label: const Text('Copy Pre-start Check'),
               ),
             ],
           ),
