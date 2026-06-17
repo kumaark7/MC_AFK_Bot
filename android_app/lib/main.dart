@@ -42,7 +42,7 @@ class _ControlHomeState extends State<ControlHome> {
   static const _platform = MethodChannel('larry_control/termux');
   static const _localApiBase = 'http://127.0.0.1:3000';
   static const _firstTimeTermuxCommand =
-      "mkdir -p ~/.termux && grep -q '^allow-external-apps *= *true' ~/.termux/termux.properties 2>/dev/null || echo 'allow-external-apps = true' >> ~/.termux/termux.properties";
+      "mkdir -p ~/.termux; echo 'allow-external-apps = true' > ~/.termux/termux.properties; cat ~/.termux/termux.properties";
 
   final _commandController = TextEditingController();
   final _accountNameController = TextEditingController();
@@ -93,10 +93,20 @@ class _ControlHomeState extends State<ControlHome> {
       _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) => _refreshStatus(silent: true));
       _addEvent('Connected to $_apiBase');
     } catch (err) {
-      _setMessage('Connection failed: $err');
+      _setMessage(_friendlyConnectionError(err));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  String _friendlyConnectionError(Object err) {
+    final text = err.toString();
+
+    if (text.contains('Connection refused')) {
+      return 'Bot service is not running. Open Setup, run Setup Bot Runtime, save server/account, then Start Termux Bot.';
+    }
+
+    return 'Connection failed: $text';
   }
 
   Future<void> _startTermuxAndConnect() async {
@@ -106,7 +116,7 @@ class _ControlHomeState extends State<ControlHome> {
     });
 
     try {
-      final result = await _runTermux('cd ~/MC_AFK_Bot && bash termux/start-bot.sh');
+      final result = await _runTermux('cd ~/MC_AFK_Bot && bash termux/start-bot.sh', background: false);
       _addEvent(result);
       await Future<void>.delayed(const Duration(seconds: 6));
       await _connect();
@@ -151,8 +161,8 @@ git pull --ff-only || true
 bash termux/setup-termux.sh
 ''';
 
-    await _runTermux(command);
-    _setMessage('Setup command sent. Restart Termux once after it finishes.');
+    await _runTermux(command, background: false);
+    _setMessage('Setup opened in Termux. Watch it finish, then return here.');
   }
 
   Future<void> _updateRuntime() async {
@@ -163,8 +173,8 @@ npm install
 chmod +x termux/*.sh
 ''';
 
-    await _runTermux(command);
-    _setMessage('Update command sent to Termux.');
+    await _runTermux(command, background: false);
+    _setMessage('Update opened in Termux.');
   }
 
   Future<void> _saveServerToTermux() async {

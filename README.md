@@ -114,9 +114,9 @@ Recommended phone flow:
 3. Go to `Setup`.
 4. Tap `Copy Command`, tap `Open Termux`, paste the command, and press Enter.
 5. Restart Termux once.
-6. Return to Larry Control and tap `Setup Bot Runtime`.
+6. Return to Larry Control and tap `Setup Bot Runtime`. Termux will open visibly so you can watch package install, git clone, and `npm install`.
 7. Use the `Setup` screen to save server and bot account details.
-8. Tap `Start Termux Bot`.
+8. Tap `Start Termux Bot`. Termux opens visibly and starts the Node bot service.
 
 This first Termux command is needed because fresh Termux installs block external app commands until `allow-external-apps = true` exists inside Termux.
 
